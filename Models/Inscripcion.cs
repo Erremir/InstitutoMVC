@@ -6,22 +6,20 @@ using System.Threading.Tasks;
 
 namespace InstitutoMVC.Models
 {
-    public class Curso
+    public class Inscripcion
     {
-       
+
         [Key]
         public Guid Id { get; set; }
 
-        public string Denominacion { get; set; }
+        public Guid CursoId { get; set; }
 
-        public Guid ProfesorId { get; set; }
-
-
-
-        public Profesor Profesor { get; set; }
+        public Guid AlumnoId { get; set; }
 
 
 
-        public List<Inscripcion> Inscripciones { get; set; }
+        public Curso Curso { get; set; }
+
+        public Alumno Alumno { get; set; }
     }
 }

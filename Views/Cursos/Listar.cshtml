@@ -18,6 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Denominacion)
             </th>
+            <th>
+                Profesor
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -31,8 +34,11 @@
                 @Html.DisplayFor(modelItem => item.Denominacion)
             </td>
             <td>
-                @Html.ActionLink("Actualizar", "Actualizar", new { id=item.Id }) |
-                @Html.ActionLink("Detalle", "Detalle", new { id=item.Id })
+                @Html.DisplayFor(modelItem => item.Profesor.Nombre) @Html.DisplayFor(modelItem => item.Profesor.Apellido)
+            </td>
+            <td>
+                @Html.ActionLink("Actualizar", "Actualizar", new { id = item.Id }) |
+                @Html.ActionLink("Detalle", "Detalle", new { id = item.Id })
             </td>
         </tr>
 }

@@ -67,8 +67,9 @@
                 @Html.DisplayFor(modelItem => item.Telefono)
             </td>
             <td>
-                @Html.ActionLink("Actualizar", "Actualizar", new { id=item.Id}) |
-                @Html.ActionLink("Detalle", "Detalle", new { id=item.Id })           
+                @Html.ActionLink("Actualizar", "Actualizar", new { id = item.Id }) |
+                @Html.ActionLink("Detalle", "Detalle", new { id = item.Id })  |
+                @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
             </td>
         </tr>
 }

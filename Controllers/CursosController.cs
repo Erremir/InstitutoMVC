@@ -10,42 +10,63 @@ namespace InstitutoMVC.Controllers
     public class CursosController : Controller
     {
 
-        public List<Curso> Cursos = new List<Curso>();
+        private readonly InstitutoContext _context;
+
+        public CursosController(InstitutoContext context)
+        {
+            _context = context;
+        }
+
         public ActionResult Crear()
         {
+            ViewBag.profesores = _context.Profesores;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Crear([Bind("Denominacion")] Curso curso)
+        public IActionResult Crear([Bind("Denominacion, ProfesorId")] Curso curso)
         {
 
             curso.Id = Guid.NewGuid();
 
-            Cursos.Add(curso);
+            Profesor profesor = _context.Profesores.Find(curso.ProfesorId);
+            curso.Profesor = profesor;
+
+            _context.Cursos.Add(curso);
+            _context.SaveChanges();
 
             return View("Detalle", curso);
         }
 
         public IActionResult Actualizar(Guid id)
         {
-            Curso curso = Cursos.Find(a => a.Id == id);
-
+            ViewBag.profesores = _context.Profesores;
+            Curso curso = _context.Cursos.Find(id);
+            
             return View(curso);
         }
 
-        [HttpPut]
-        public IActionResult Actualizar([Bind("Id, Denominacion")] Curso curso)
+        [HttpPost]
+        public IActionResult Actualizar([Bind("Id, Denominacion, ProfesorId")] Curso curso)
         {
-            Curso oldCurso = Cursos.Find(a => a.Id == curso.Id);
-            Cursos.Remove(oldCurso);
-            Cursos.Add(curso);
+
+            Profesor profesor = _context.Profesores.Find(curso.ProfesorId);
+            curso.Profesor = profesor;
+
+            _context.Cursos.Update(curso);
+            _context.SaveChanges();
 
             return View("Detalle", curso);
         }
 
         public IActionResult Listar()
         {
+            List<Curso> Cursos = _context.Cursos.ToList();
+            foreach (Curso curso in Cursos)
+            {
+                Profesor profesor = _context.Profesores.Find(curso.ProfesorId);
+                curso.Profesor = profesor;
+            }
             return View(Cursos);
         }
     }

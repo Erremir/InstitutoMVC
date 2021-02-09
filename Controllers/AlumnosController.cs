@@ -1,5 +1,6 @@
 ﻿using InstitutoMVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,12 @@ namespace InstitutoMVC.Controllers
     public class AlumnosController : Controller
     {
 
-        public List<Alumno> Alumnos = new List<Alumno>();
+        private readonly InstitutoContext  _context;
+
+        public AlumnosController (InstitutoContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Crear()
         {
@@ -18,35 +24,47 @@ namespace InstitutoMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Crear([Bind("Nombre, Apellido, DNI, Email, FechaNacimiento, Domicilio, Telefono, legajo")] Alumno alumno) {
+        public IActionResult Crear([Bind("Nombre, Apellido, DNI, Email, FechaNacimiento, Domicilio, Telefono, Legajo")] Alumno alumno) {
 
             alumno.Id = Guid.NewGuid();
 
-            Alumnos.Add(alumno);
+            _context.Alumnos.Add(alumno);
+            _context.SaveChanges();
 
             return View("Detalle",alumno);
         }
         
         public IActionResult Actualizar(Guid id)
         {
-            Alumno alumno = Alumnos.Find(a => a.Id == id);
+            Alumno alumno = _context.Alumnos.Find(id);
 
             return View(alumno);
         }
 
-        [HttpPut]
-        public IActionResult Actualizar([Bind("Id, Nombre, Apellido, DNI, Email, FechaNacimiento, Domicilio, Telefono, legajo")] Alumno alumno)
+        [HttpPost]
+        public IActionResult Actualizar([Bind("Id, Nombre, Apellido, DNI, Email, FechaNacimiento, Domicilio, Telefono, Legajo")] Alumno alumno)
         {
-            Alumno oldAlumno = Alumnos.Find(a => a.Id == alumno.Id);
-            Alumnos.Remove(oldAlumno);
-            Alumnos.Add(alumno);
+
+            _context.Alumnos.Update(alumno);
+            _context.SaveChanges();
 
             return View("Detalle", alumno);
         }
 
         public IActionResult Listar()
         {
+            IEnumerable<Alumno> Alumnos = _context.Alumnos;
             return View(Alumnos);
+        }
+
+        public IActionResult Delete(Guid id)
+        {
+            Alumno alumno = _context.Alumnos.Find(id);
+            
+            _context.Alumnos.Remove(alumno);
+            _context.SaveChanges();
+
+            return View("Listar", _context.Alumnos);
         }
 
     }

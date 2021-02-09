@@ -9,8 +9,13 @@ namespace InstitutoMVC.Controllers
 {
     public class ProfesoresController : Controller
     {
-        public List<Profesor> Profesores = new List<Profesor>();
-        
+        private readonly InstitutoContext _context;
+
+        public ProfesoresController(InstitutoContext context)
+        {
+            _context = context;
+        }
+
         public ActionResult Crear()
         {
             return View();
@@ -22,31 +27,41 @@ namespace InstitutoMVC.Controllers
 
             profesor.Id = Guid.NewGuid();
 
-            Profesores.Add(profesor);
+            _context.Profesores.Add(profesor);
+            _context.SaveChanges();
 
             return View("Detalle", profesor);
         }
 
         public IActionResult Actualizar(Guid id)
         {
-            Profesor profesor = Profesores.Find(a => a.Id == id);
+            Profesor profesor = _context.Profesores.Find(id);
 
             return View(profesor);
         }
 
-        [HttpPut]
+        [HttpPost]
         public IActionResult Actualizar([Bind("Id, Nombre, Apellido, DNI, Email, FechaNacimiento, Domicilio, Telefono, legajo")] Profesor profesor)
         {
-            Profesor oldProfesor = Profesores.Find(a => a.Id == profesor.Id);
-            Profesores.Remove(oldProfesor);
-            Profesores.Add(profesor);
+
+            _context.Profesores.Update(profesor);
+
+            _context.SaveChanges();
 
             return View("Detalle", profesor);
         }
 
         public IActionResult Listar()
         {
-            return View(Profesores);
+            return View(_context.Profesores);
+        }
+
+        public IActionResult Delete(Guid id)
+        {
+            Profesor profesor = _context.Profesores.Find(id);
+            _context.Profesores.Remove(profesor);
+            _context.SaveChanges();
+            return View("Listar", _context.Profesores);
         }
 
     }
